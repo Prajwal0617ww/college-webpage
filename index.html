@@ -22,7 +22,7 @@
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      to { opacity: 1; transform: Pellety(0); }
     }
     .card {
       transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -38,16 +38,79 @@
       border-radius: 8px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
+    .mobile-menu {
+      transition: transform 0.3s ease-in-out;
+    }
+    .mobile-menu.open {
+      transform: translateX(0);
+    }
+    .mobile-menu.closed {
+      transform: translateX(100%);
+    }
     @media (max-width: 640px) {
       .nav-container {
-        flex-direction: column;
-        gap: 1rem;
+        display: none;
       }
       .header-img {
         width: 80px;
       }
       .iframe-map {
         height: 250px;
+      }
+      .mobile-menu {
+        position: fixed;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 75%;
+        max-width: 300px;
+        background: #1e3a8a;
+        z-index: 20;
+        padding: 2rem;
+        box-shadow: -4px 0 10px rgba(0, 0, 0, 0.2);
+      }
+      .mobile-menu a {
+        display: block;
+        padding: 1rem 0;
+        color: white;
+        font-size: 1.25rem;
+        font-weight: 500;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .mobile-menu a:hover {
+        color: #ffd700;
+      }
+      .hamburger {
+        display: block;
+        cursor: pointer;
+        padding: 0.5rem;
+      }
+      .hamburger span {
+        display: block;
+        width: 24px;
+        height: 3px;
+        background: white;
+        margin: 5px 0;
+        transition: all 0.3s ease;
+      }
+      .hamburger.open span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+      .hamburger.open span:nth-child(2) {
+        opacity: 0;
+      }
+      .hamburger.open span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -7px);
+      }
+    }
+    @media (min-width: 641px) {
+      .hamburger, .mobile-menu {
+        display: none;
+      }
+      .nav-container {
+        display: flex !important;
+        justify-content: center;
+        gap: 6rem;
       }
     }
   </style>
@@ -62,13 +125,28 @@
   </header>
 
   <nav class="bg-blue-800 py-4 sticky top-0 z-10 shadow-md">
-    <div class="container mx-auto px-4 flex nav-container justify-center gap-6 md:gap-8">
-      <a href="#" onclick="showSection('home')" class="nav-link text-white font-semibold text-lg">Home</a>
-      <a href="#" onclick="showSection('about')" class="nav-link text-white font-semibold text-lg">About</a>
-      <a href="#" onclick="showSection('courses')" class="nav-link text-white font-semibold text-lg">Courses</a>
-      <a href="#" onclick="showSection('faculty')" class="nav-link text-white font-semibold text-lg">Faculty</a>
-      <a href="#" onclick="showSection('news')" class="nav-link text-white font-semibold text-lg">News</a>
-      <a href="#" onclick="showSection('contact')" class="nav-link text-white font-semibold text-lg">Contact</a>
+    <div class="container mx-auto px-4">
+      <div class="nav-container flex gap-6 md:gap-8">
+        <a href="#" onclick="showSection('home')" class="nav-link text-white font-semibold text-lg">Home</a>
+        <a href="#" onclick="showSection('about')" class="nav-link text-white font-semibold text-lg">About</a>
+        <a href="#" onclick="showSection('courses')" class="nav-link text-white font-semibold text-lg">Courses</a>
+        <a href="#" onclick="showSection('faculty')" class="nav-link text-white font-semibold text-lg">Faculty</a>
+        <a href="#" onclick="showSection('news')" class="nav-link text-white font-semibold text-lg">News</a>
+        <a href="#" onclick="showSection('contact')" class="nav-link text-white font-semibold text-lg">Contact</a>
+      </div>
+      <div class="hamburger md:hidden" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    <div class="mobile-menu closed md:hidden">
+      <a href="#" onclick="showSection('home'); toggleMenu()" class="nav-link">Home</a>
+      <a href="#" onclick="showSection('about'); toggleMenu()" class="nav-link">About</a>
+      <a href="#" onclick="showSection('courses'); toggleMenu()" class="nav-link">Courses</a>
+      <a href="#" onclick="showSection('faculty'); toggleMenu()" class="nav-link">Faculty</a>
+      <a href="#" onclick="showSection('news'); toggleMenu()" class="nav-link">News</a>
+      <a href="#" onclick="showSection('contact'); toggleMenu()" class="nav-link">Contact</a>
     </div>
   </nav>
 
@@ -93,7 +171,7 @@
     </section>
 
     <section id="about" class="section hidden">
-      <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 text-center">About Us</h2>
+      <h2 class="text-2xl md:text-3xl font-boldímportant text-gray-800 mb-6 text-center">About Us</h2>
       <div class="card bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
         <p class="text-gray-600 text-lg">
           Our college was established in 1960 by Shri Shivaji Education Society, founded by Dr. Panjabrao Deshamukh with a mission to provide top-notch education. We offer a dynamic learning environment, modern facilities, and experienced faculty. It is affiliated with Sant Gadagebaba Amaravati University.
@@ -167,6 +245,14 @@
     function submitForm() {
       alert("Thank you for contacting us! We'll get back to you soon.");
       document.querySelectorAll('#contact input, #contact textarea').forEach(field => field.value = '');
+    }
+
+    function toggleMenu() {
+      const menu = document.querySelector('.mobile-menu');
+      const hamburger = document.querySelector('.hamburger');
+      menu.classList.toggle('open');
+      menu.classList.toggle('closed');
+      hamburger.classList.toggle('open');
     }
   </script>
 </body>
